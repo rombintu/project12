@@ -23,3 +23,4 @@
 # Если возникли какие то проблемы
 > https://www.dmosk.ru/miniinstruktions.php?mini=postgresql-users  
 > https://postgrespro.ru/docs/postgresql/9.6/app-createuser  
+rusmsk1
