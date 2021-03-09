@@ -3,6 +3,7 @@
 > sudo apt-get install postgresql-13  
 > sudo service start postgresql  
 > sudo service enable postgresql  
+> service status postgresql  
 
 # Создать пользователя и бд
 > sudo -i  
@@ -17,6 +18,7 @@
 # Теперь можно зайти в нашу бд новым пользователем  
 > psql -U test testdb  
 > $ SELECT verstion();  
+> теперь можно заняться work_with_db.py
 
 # Если возникли какие то проблемы
 > https://www.dmosk.ru/miniinstruktions.php?mini=postgresql-users  
