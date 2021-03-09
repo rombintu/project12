@@ -17,7 +17,7 @@
 
 # Теперь можно зайти в нашу бд новым пользователем  
 > psql -U test testdb  
-> $ SELECT verstion();  
+> $ SELECT version();  
 > теперь можно заняться work_with_db.py
 
 # Если возникли какие то проблемы
