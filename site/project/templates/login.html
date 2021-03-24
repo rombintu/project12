@@ -1,0 +1,62 @@
+
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Login</title>
+<style>
+    
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
+    }
+
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+      }
+    }
+    #center-blyat{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        
+    }
+  </style>
+{% endblock %}
+
+{% block body %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<div class="form-signin" id="center-blyat">
+    <form method="POST">
+      <h1 class="h3 mb-3 fw-normal">Введите данные</h1>
+      <label for="inputEmail" class="visually-hidden">Nickname</label>
+      <input type="" name="name" id="inputEmail" class="form-control" placeholder="Nickname of telegram" required="" autofocus="">
+      <!-- <label for="inputEmail" class="visually-hidden">Email</label>
+      <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required="" autofocus="">
+      <label for="inputPassword" class="visually-hidden">Password</label>
+      <input type="password" id="inputPassword" class="form-control" placeholder="Password" required="">
+      <div class="checkbox mb-3">
+        <label>
+          <input type="checkbox" value="remember-me"> Запомнить меня
+        </label> -->
+      <!-- </div> -->
+      <button class="w-100 btn btn-lg btn-primary" type="submit">Войти</button>
+    </form>
+</div>
+
+{% endblock %}
+

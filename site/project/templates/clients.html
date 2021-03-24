@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>profile</title>
+<style>
+    #center-blyat{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        
+    }
+  </style>
+{% endblock %}
+
+{% block body %}
+<h1 id="center-blyat">Наши клиенты</h1>
+<div class="container" id="center-blyat">
+    <ul>
+    {% for client in data %}
+            <li>Имя: <b>{{client}}</b></li>
+    {% endfor %}
+    </ul>
+</div>
+
+<p id="center-blyat">Чтобы получить статус TRUE и пользоваться нашим сервисом, используйте телеграмм-бота</p>
+<h3 id="center-blyat">@vps12bot</h3>
+{% endblock %}
