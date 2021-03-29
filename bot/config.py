@@ -1,0 +1,3 @@
+TOKEN = '1614983440:AAG4vcaGujLaRh6p-NqVFMwhpaG2T-2w6cE'
+
+vip = [469973030]
