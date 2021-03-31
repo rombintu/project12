@@ -3,7 +3,7 @@ import random as r
 
 from requests import get
 from telebot import types
-from smiles import smile_dict
+from codec_smiles import smile_dict
 from config import TOKEN, vip
 from dbfunc import *
 
