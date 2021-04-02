@@ -22,3 +22,6 @@
 [libvirt-more](https://wiki.libvirt.org/page/UbuntuKVMWalkthrough)  
 [libvirt-guid](https://libvirt.org/docs/libvirt-appdev-guide-python/en-US/html/libvirt_application_development_guide_using_python-Connections.html)  
 [how clone vm](https://www.cyberciti.biz/faq/how-to-clone-existing-kvm-virtual-machine-images-on-linux/)  
+[postgres](https://github.com/rombintu/project12/blob/main/psql_help.md)  
+
+[license](https://github.com/rombintu/project12/blob/main/license)
