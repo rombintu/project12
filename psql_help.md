@@ -18,7 +18,7 @@
 ## Заходим в нашу бд под новым пользователем  
 > `psql -U test testdb`  
 > $ `SELECT version();`  
-> если нужно настроить удаленное [подключение](https://www.dmosk.ru/miniinstruktions.php?mini=pgsql-remote)
+> если нужно настроить удаленное [подключение](https://www.dmosk.ru/miniinstruktions.php?mini=pgsql-remote)  
 > теперь можно заняться work_with_db.py
 
 ### Если возникли какие то проблемы  

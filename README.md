@@ -15,7 +15,7 @@
 > `python -m flask run`    
 
 
-# Источники  
+## Источники  
 [libvirt](https://linuxhint.com/libvirt_python/)  
 [libvirt-api](https://libvirt.org/docs/libvirt-appdev-guide-python/en-US/pdf/Version-1.1-Libvirt_Application_Development_Guide_Using_Python-en-US.pdf)  
 [kvm](https://www.rupython.com/kvm-api-89448.html)  
@@ -24,4 +24,5 @@
 [how clone vm](https://www.cyberciti.biz/faq/how-to-clone-existing-kvm-virtual-machine-images-on-linux/)  
 [postgres](https://github.com/rombintu/project12/blob/main/psql_help.md)  
 
-[license](https://github.com/rombintu/project12/blob/main/license)
+### Прочее  
+[license](https://github.com/rombintu/project12/blob/main/license)  
