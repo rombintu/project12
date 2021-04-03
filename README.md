@@ -7,7 +7,7 @@
 
 ## Запуск  
 > `pip install -r requirements.txt` 
-> `cp bot/config.py.bak bot/config.py` 
+> `cp bot/config.py.bak bot/config.py`  
 > настройте файл config.py  
 > `python3 main.py`
 
