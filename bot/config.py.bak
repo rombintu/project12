@@ -1,3 +1,7 @@
+# Для бота
 TOKEN = 'TOKEN'
-
 vip = ['VIPs']
+
+# Для отправки ключей
+username = 
+password = 

@@ -3,9 +3,11 @@
 > dbfunc - управление БД  
 > parse_smiles - создание файла с кодировками смайлов  
 > libvirt_api - управление ВМ  
+> ssh_api - передача ключей  
 
 ## Запуск  
-> `pip install -r requirements.txt`  
+> `pip install -r requirements.txt` 
+> `cp bot/config.py.bak bot/config.py` 
 > настройте файл config.py  
 > `python3 main.py`
 
@@ -23,6 +25,6 @@
 [libvirt-guid](https://libvirt.org/docs/libvirt-appdev-guide-python/en-US/html/libvirt_application_development_guide_using_python-Connections.html)  
 [how clone vm](https://www.cyberciti.biz/faq/how-to-clone-existing-kvm-virtual-machine-images-on-linux/)  
 [postgres](https://github.com/rombintu/project12/blob/main/psql_help.md)  
-
-### Прочее  
+[ssh-api](https://habr.com/ru/post/150047/)  
+### Прочее
 [license](https://github.com/rombintu/project12/blob/main/license)  
