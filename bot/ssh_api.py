@@ -21,7 +21,7 @@ def send_keys_os(host, keyfile):
     # Отправка ключей без пароля (beta)
     with open(f'tmp/{keyfile}', 'r') as f:
         buff = f.read()
-    command = f'scp tmp/{keyfile} alpine@1{host}:/home/alpine/.ssh/authorized_keys'
+    command = f'scp tmp/{keyfile} alpine@{host}:/home/alpine/.ssh/authorized_keys'
     os.system(command)
 
 
