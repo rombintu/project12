@@ -1,20 +1,21 @@
 # Бот часть
 ## API  
-> dbfunc - управление БД  
-> parse_smiles - создание файла с кодировками смайлов  
+> sql_api - управление БД  
 > libvirt_api - управление ВМ  
 > ssh_api - передача ключей  
+> parse_smiles - создание файла с кодировками смайлов  
+
+### Установка зависимостей  
+> `pip install -r requirements.txt`  
 
 ## Запуск  
-> `pip install -r requirements.txt`  
 > `cp bot/config.py.bak bot/config.py`  
 > настройте файл config.py  
-> `python3 main.py`
+> `python3 main.py`  
 
 # Сайт часть  
 ## Запуск  
-> `pip install -r requirements.txt`  
-> `python -m flask run`    
+> `python -m flask run`  
 
 
 ## Источники  

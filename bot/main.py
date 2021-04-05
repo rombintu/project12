@@ -24,7 +24,7 @@ def getMessage(message):
     
     commands = ['/start', '/addkey', '/id', '/info', '/registr', '/manage']
 
-    kommands = ['Вкл/Выкл', 'Создать/Удалить', 'Информация', 'Закинуть ключи']
+    kommands = ['Вкл/Выкл', 'Создать/Удалить', 'Информация', 'Закинуть ключи', 'Информация о гипервизоре']
     keyboard = types.ReplyKeyboardMarkup()
     
     reg_btn = types.InlineKeyboardButton('Быстрая регистрация', callback_data='registr')
@@ -92,22 +92,26 @@ def getMessage(message):
     elif text == commands[5]: # MANAGE
         keyboard.row(kommands[0], kommands[1])
         keyboard.row(kommands[3], kommands[2])
+        keyboard.row(kommands[4])
         bot.send_message(id_user, "Выбери действие", reply_markup=keyboard)
     elif text == kommands[0]: # On/Off
         try:
             if virt.status_instance(id_user):
                 virt.stop_instance(id_user)
+                print_bot('ВМ остановлена')
             else:
                 virt.start_instance(id_user)
+                print_bot('ВМ запущена')
         except Exception as e:
             error = 'Видимо машина не создана\n' + 'SYS: ' + str(e)
             print_bot(error)
     elif text == kommands[1]: # Create/Delete
-        try:
-            list_instance = virt.get_list_instances()
-            log.debug(list_instance)
-        except Exception as e:
-            print(e)
+        # try:
+        #     list_instance = virt.get_list_instances()
+        #     log.debug(list_instance)
+        # except Exception as e:
+            # print(e)
+        # ДЕЛАТЬ КАКУЮ ТО ПРОВЕРКУ
         if str(id_user) in list_instance:
             @log.catch
             def delete_func(message):
@@ -116,6 +120,7 @@ def getMessage(message):
                     try:
                         #virt.delete_instance(id_user)
                         print_bot('Машина удалена')
+                        # ИЗМНЕНИТЬ ДАННЫЕ В БД
                     except Exception as e:
                         error = 'Что то пошло не так\n' + 'SYS: ' + str(e)
                         print_bot(error)
@@ -127,9 +132,10 @@ def getMessage(message):
         else:
             try:
                 #virt.clone_instance('alpine_orig', id_user)
+                # ИЗМНЕНИТЬ ДАННЫЕ В БД
                 print_bot("""Ваша виртуальная машина создается, пожалуйста подождите 1 минуту и нажмите /getip""")
             except Exception as e:
-                error = 'Видимо ваша машина еще не создана\n' + 'SYS: ' + e
+                error = 'Видимо ваша машина еще не создана\n' + 'SYS: ' + str(e)
                 print_bot(error)
             
     elif text == kommands[2]: # GET Info
@@ -140,14 +146,25 @@ def getMessage(message):
                 buff += f'{key} : {info[key]}\n'
             print_bot(buff)
         except Exception as e:
-            print(e)
-    elif text == '/getip':
+            error = 'Что то пошло не так\n' + 'SYS: ' + str(e)
+            print_bot(error)
+    elif text == '/getip': # GET IP VM
         try:
             ip_vm = virt.get_ip(id_user)
             print_bot(ip_vm)
             update_ip_vm(user_id, ip_vm)
         except Exception as e:
             error = 'Видимо ваша машина еще не создана\n' + 'SYS: ' + str(e)
+            print_bot(error)
+    elif text == kommands[4]: # GET INFO ABOUT GPV
+        try:
+            info = virt.get_node_info()
+            buff = ''
+            for key in info:
+                buff += f'{key} : {info[key]}\n'
+            print_bot(buff)
+        except Exception as e:
+            error = 'Что то пошло не так\n' + 'SYS: ' + str(e)
             print_bot(error)
     else:
         print_bot("Неизвестная команда, попробуйте нажать на '/'")
