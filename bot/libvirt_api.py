@@ -1,5 +1,6 @@
 import libvirt
 import os
+
 from loguru import logger as log
 
 from alpine_for_clone import clone, volume
@@ -43,18 +44,18 @@ def create_new_instance(name):
 
 def clone_instance(original, clone):
     # Клонирует оригинал
-    os.system(f"virt-clone --original {original} --name {clone} --auto-clone")
+    os.system(f"virt-clone --original {original} --name {str(clone)} --auto-clone")
 
 def delete_instance(name):
     # Удаляет машину
     conn = libvirt.open('qemu:///system')
 
-    if name == 'alpine_orig': # на всякий случай
+    if str(name) == 'alpine_orig': # на всякий случай
         return False
 
     pool = conn.storagePoolLookupByName('default')
     volume = pool.storageVolLookupByName(f'{name}.qcow2')
-    instance = conn.lookupByName(name)
+    instance = conn.lookupByName(str(name))
     instance.undefine()
     volume.delete(0)
     conn.close()
@@ -69,18 +70,26 @@ def get_list_instances():
 def get_ip(name):
     # Возвращает IP машины
     conn = libvirt.open('qemu:///system')
-    instance = conn.lookupByName(name)
+    instance = conn.lookupByName(str(name))
     data = list(instance.interfaceAddresses(0).values())
     ip = data[0]['addrs'][0]['addr']
     conn.close()
     return ip
+
+def status_instance(name):
+    conn = libvirt.open('qemu:///system')
+    instance = conn.lookupByName(str(name))
+    info = instance.info()
+    status = info[4]
+    conn.close()
+    return status
 
 def get_info_instance(name):
     # Возвращает словарь с информацией о конкретной машине
     help_dict = ['Статус', 'ОЗУ', 'ОЗУ(есть)', 
                  'Использует ядер', 'Работает']
     conn = libvirt.open('qemu:///system')
-    instance = conn.lookupByName(name)
+    instance = conn.lookupByName(str(name))
     info = instance.info()
     info[1] = f'{info[1]/1024} MB'
     info[2] = f'{info[2]/1024} MB'
@@ -95,26 +104,26 @@ def get_info_instance(name):
 def start_instance(name):
     # Запускает машину по имени
     conn = libvirt.open('qemu:///system')
-    instance = conn.lookupByName(name)
+    instance = conn.lookupByName(str(name))
     instance.create()
     conn.close()
 
 def stop_instance(name):
     # Останавливает машину по имени
     conn = libvirt.open('qemu:///system')
-    instance = conn.lookupByName(name)
+    instance = conn.lookupByName(str(name))
     instance.shutdown()
     conn.close()
 
-@log.catch
-def main():
-    # l = get_info_instance('alpine_orig')
-    # log.debug(l)
-    # start_instance('alpine_orig')
-    # stop_instance('alpine_clone')
-    # clone_instance('alpine_orig','alpine_clone')
-    # delete_instance('alpine_clone')
-    # log.debug(get_ip('alpine_orig'))
+# @log.catch
+# def main():
+#     # l = get_info_instance('alpine_orig')
+#     # log.debug(l)
+#     # start_instance('alpine_orig')
+#     # stop_instance('alpine_clone')
+#     # clone_instance('alpine_orig','alpine_clone')
+#     # delete_instance('alpine_clone')
+#     # log.debug(get_ip('alpine_orig'))
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

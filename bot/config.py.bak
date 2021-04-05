@@ -1,7 +1,14 @@
-# Для бота
+# BOT
 TOKEN = 'TOKEN'
 vip = ['VIPs']
 
-# Для отправки ключей
-username = 
-password = 
+# POSTGRESQL
+DB_NAME = 
+USER_NAME = 
+USER_PASSWORD = 
+HOST = 
+
+# SSH_api - RSA_key
+USERNAME_SSH = 
+PASSWORD_SSH = 
+PORT_SHH =  

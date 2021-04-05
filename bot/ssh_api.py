@@ -1,15 +1,14 @@
 import os
 import paramiko as ssh
-from config import username, password
+from config import USERNAME_SSH, PASSWORD_SSH, PORT_SSH
 
-def send_keys_with_password(host, keyfile):
+def send_keys_with_password(HOST, keyfile):
     # Отправка ключей с использованием пароля
-    port = 22
-    transport = ssh.Transport((host, port))
+    transport = ssh.Transport((HOST, PORT_SSH))
     transport.connect(username=username, password=password)
     sftp = ssh.SFTPClient.from_transport(transport)
 
-    local_path = f'tmp/{keyfile}'
+    local_path = f'tmp/{keyfile}.txt'
     remote_path = '/home/alpine/.ssh/authorized_keys'
     
     sftp.put(local_path, remote_path)
@@ -17,11 +16,11 @@ def send_keys_with_password(host, keyfile):
     sftp.close()
     transport.close()
 
-def send_keys_os(host, keyfile):
+def send_keys_os(HOST, keyfile):
     # Отправка ключей без пароля (beta)
     with open(f'tmp/{keyfile}', 'r') as f:
         buff = f.read()
-    command = f'scp tmp/{keyfile} alpine@{host}:/home/alpine/.ssh/authorized_keys'
+    command = f'scp tmp/{keyfile} alpine@{HOST}:/home/alpine/.ssh/authorized_keys'
     os.system(command)
 
 
