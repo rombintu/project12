@@ -57,8 +57,8 @@ def getMessage(message):
                         send_keys_with_password(ip_vm, id_user)
                         print_bot('Ключи отправлены!')
                     except Exception as e:
-                        print(e)
-                        print_bot('Что то пошло не так /info')
+                        error = 'Что то пошло не так /info\n' + 'SYS: ' + str(e)
+                        print_bot(error)
             if message.text:
                 pub_key = message.text
                 send_pub_key(pub_key)
@@ -83,8 +83,8 @@ def getMessage(message):
         info = get_info(id_user)
         buff_dict = dict(zip(help_dict, info))
         buff = ''
-        for key, item in buff_dict:
-            buff += f'{key} : {item} \n'
+        for key in buff_dict:
+            buff += f'{key} : {buff_dict[key]} \n'
         bot.send_message(id_user, buff)
             
     elif text == commands[4]: # REGISTRATION
@@ -94,13 +94,18 @@ def getMessage(message):
         keyboard.row(kommands[3], kommands[2])
         bot.send_message(id_user, "Выбери действие", reply_markup=keyboard)
     elif text == kommands[0]: # On/Off
-        if virt.status_instance(id_user):
-            virt.stop_instance(id_user)
-        else:
-            virt.start_instance(id_user)
+        try:
+            if virt.status_instance(id_user):
+                virt.stop_instance(id_user)
+            else:
+                virt.start_instance(id_user)
+        except Exception as e:
+            error = 'Видимо машина не создана\n' + 'SYS: ' + str(e)
+            print_bot(error)
     elif text == kommands[1]: # Create/Delete
         try:
             list_instance = virt.get_list_instances()
+            log.debug(list_instance)
         except Exception as e:
             print(e)
         if str(id_user) in list_instance:
@@ -109,10 +114,10 @@ def getMessage(message):
                 text = (message.text).lower()
                 if text == 'д' or text == 'y':
                     try:
-                        virt.delete_instance(id_user)
+                        #virt.delete_instance(id_user)
                         print_bot('Машина удалена')
                     except Exception as e:
-                        error = 'Что то пошло не так\n' + 'SYS: ' + e
+                        error = 'Что то пошло не так\n' + 'SYS: ' + str(e)
                         print_bot(error)
                 else:
                     print_bot('Отмена операции')
@@ -121,7 +126,7 @@ def getMessage(message):
             bot.register_next_step_handler(message, delete_func)
         else:
             try:
-                virt.clone_instance('alpine_orig', id_user)
+                #virt.clone_instance('alpine_orig', id_user)
                 print_bot("""Ваша виртуальная машина создается, пожалуйста подождите 1 минуту и нажмите /getip""")
             except Exception as e:
                 error = 'Видимо ваша машина еще не создана\n' + 'SYS: ' + e
@@ -131,8 +136,8 @@ def getMessage(message):
         try:
             info = virt.get_info_instance(id_user)
             buff = ''
-            for key, item in info:
-                buff += f'{key} : {item}\n'
+            for key in info:
+                buff += f'{key} : {info[key]}\n'
             print_bot(buff)
         except Exception as e:
             print(e)
@@ -142,7 +147,7 @@ def getMessage(message):
             print_bot(ip_vm)
             update_ip_vm(user_id, ip_vm)
         except Exception as e:
-            error = 'Видимо ваша машина еще не создана\n' + 'SYS: ' + e
+            error = 'Видимо ваша машина еще не создана\n' + 'SYS: ' + str(e)
             print_bot(error)
     else:
         print_bot("Неизвестная команда, попробуйте нажать на '/'")
