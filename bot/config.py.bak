@@ -11,5 +11,5 @@ HOST = ''
 # SSH_api - RSA_key
 USERNAME_SSH = ''
 PASSWORD_SSH = ''
-PORT_SHH =  ''
+PORT_SSH =  ''
 PUB_KEY_SERVER = ''

@@ -9,7 +9,7 @@ from loguru import logger as log
 from codec_smiles import smile_dict
 from config import TOKEN, vip
 from sql_api import *
-from ssh_api import send_keys_with_password
+from ssh_api import send_keys_os
 import libvirt_api as virt
 
 bot = telebot.TeleBot(TOKEN)
@@ -57,7 +57,7 @@ def getMessage(message):
                     try:
                         write_key_in_file(id_user, pub_key)
                         ip_vm = get_ip_vm(id_user)
-                        send_keys_with_password(ip_vm, id_user)
+                        send_key_os(ip_vm, id_user) # ДОПИЛИТЬ
                         print_bot('Ключи отправлены!')
                         update_user_info(user_id, ['pub_key_status'], ['True'])
                     except Exception as e:
