@@ -1,6 +1,6 @@
 import os
 import paramiko as ssh
-from config import USERNAME_SSH, PASSWORD_SSH, PORT_SSH
+from config import USERNAME_SSH, PASSWORD_SSH, PORT_SSH, PUB_KEY_SERVER
 
 def send_keys_with_password(HOST, keyfile):
     # Отправка ключей с использованием пароля
@@ -18,9 +18,7 @@ def send_keys_with_password(HOST, keyfile):
 
 def send_keys_os(HOST, keyfile):
     # Отправка ключей без пароля (beta)
-    with open(f'tmp/{keyfile}', 'r') as f:
-        buff = f.read()
-    command = f'scp tmp/{keyfile} alpine@{HOST}:/home/alpine/.ssh/authorized_keys'
+    command = f'scp tmp/{keyfile}.txt alpine@{HOST}:/home/alpine/.ssh/authorized_keys'
     os.system(command)
 
 
