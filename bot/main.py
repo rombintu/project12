@@ -9,7 +9,7 @@ from loguru import logger as log
 from codec_smiles import smile_dict
 from config import TOKEN, vip
 from sql_api import *
-from ssh_api import send_keys_os
+from ssh_api import send_keys_with_password
 import libvirt_api as virt
 
 bot = telebot.TeleBot(TOKEN)
@@ -22,16 +22,16 @@ def getMessage(message):
     username = f'@{message.from_user.username}'
 
     
-    commands = ['/start', '/addkey', '/id', '/info', '/registr', '/manage', '/hi_admin']
+    commands = ['/start', '/addkey', '/id', '/info', '/registr', '/manage', '/hi_admin', '/activate']
 
-    kommands = ['Вкл/Выкл', 'Создать/Удалить', 'Информация', 'Закинуть ключи', 'Информация о гипервизоре']
+    kommands = ['Вкл/Выкл', 'Создать/Удалить', 'Информация о ВМ', 'Закинуть ключи', 'Информация о гипервизоре']
     keyboard = types.ReplyKeyboardMarkup()
     
     reg_btn = types.InlineKeyboardButton('Быстрая регистрация', callback_data='registr')
     reg_cb_func = types.InlineKeyboardMarkup().add(reg_btn)
     
     def write_key_in_file(id_user, pub_key):
-        with opent(f'tmp/{id_user}.txt', 'w') as f:
+        with open(f'tmp/{id_user}.txt', 'w') as f:
             f.write(pub_key)
 
     def print_bot(text):
@@ -57,9 +57,13 @@ def getMessage(message):
                     try:
                         write_key_in_file(id_user, pub_key)
                         ip_vm = get_ip_vm(id_user)
-                        send_key_os(ip_vm, id_user) # ДОПИЛИТЬ
+                        try:
+                            send_keys_with_password(ip_vm, id_user)
+                        except Exception as e:
+                            print_bot(e)
+                            return False
                         print_bot('Ключи отправлены!')
-                        update_user_info(user_id, ['pub_key_status'], ['True'])
+                        update_user_info(user_id, 'pub_key_status', 'True') # ДОПИЛИТЬ
                     except Exception as e:
                         error = 'Что то пошло не так /info\n' + 'SYS: ' + str(e)
                         print_bot(error)
@@ -107,10 +111,10 @@ def getMessage(message):
         try:
             if virt.status_instance(id_user):
                 virt.stop_instance(id_user)
-                print_bot('ВМ остановлена')
+                print_bot('ВМ остановлена подождите 10 секунд')
             else:
                 virt.start_instance(id_user)
-                print_bot('ВМ запущена')
+                print_bot('ВМ запущена, подождите 30 секунд')
         except Exception as e:
             error = 'Видимо машина не создана\n' + 'SYS: ' + str(e)
             print_bot(error)
@@ -123,22 +127,21 @@ def getMessage(message):
             if info['Работает'] == 'Да':
                 print_bot('Перед этой операцией нужно выключить машину')
                 return False
-        except:
-            error = 'Что то пошло не так\n' + 'SYS: ' + str(e)
-            print_bot(error)
-            return False
+        except Exception as e:
+            pass
 
         list_instances = virt.get_list_instances()
+        # log.debug(list_instances)
         if str(id_user) in list_instances:
             @log.catch
             def delete_func(message):
                 text = (message.text).lower()
                 if text == 'д' or text == 'y':
                     try:
-                        #virt.delete_instance(id_user)
+                        virt.delete_instance(id_user)
                         print_bot('Машина удалена')
                         # ИЗМНЕНИТЬ ДАННЫЕ В БД
-                        update_user_info(user_id, ['vm_status'], ['False'])
+                        update_user_info(id_user, 'vm_status', 'False')
                     except Exception as e:
                         error = 'Что то пошло не так\n' + 'SYS: ' + str(e)
                         print_bot(error)
@@ -149,10 +152,10 @@ def getMessage(message):
             bot.register_next_step_handler(message, delete_func)
         else:
             try:
-                #virt.clone_instance('alpine_orig', id_user)
+                print_bot("""Ваша виртуальная машина создается, пожалуйста подождите 1 минуту и нажмите 'Информация о ВМ'""")
+                virt.clone_instance('alpine_orig', id_user)
                 # ИЗМНЕНИТЬ ДАННЫЕ В БД
-                update_user_info(user_id, ['vm_status'], ['True'])
-                print_bot("""Ваша виртуальная машина создается, пожалуйста подождите 1 минуту и нажмите /getip""")
+                update_user_info(id_user, 'vm_status', 'True')
             except Exception as e:
                 error = 'Видимо ваша машина еще не создана\n' + 'SYS: ' + str(e)
                 print_bot(error)
@@ -166,7 +169,7 @@ def getMessage(message):
             buff = ''
             for key in info:
                 buff += f'{key} : {info[key]}\n'
-            print_bot(buff)
+            print_bot(buff + '/getip - присвоить IP адрес')
         except Exception as e:
             error = 'Видимо ВМ не создано\n' + 'SYS: ' + str(e)
             print_bot(error)
@@ -177,9 +180,9 @@ def getMessage(message):
         try:
             ip_vm = virt.get_ip(id_user)
             print_bot(ip_vm)
-            update_user_info(user_id, ['ip_vm'], [ip_vm])
+            update_user_info(id_user, 'ip_vm', ip_vm)
         except Exception as e:
-            error = 'Видимо ваша машина еще не создана\n' + 'SYS: ' + str(e)
+            error = 'Видимо ваша машина еще не создана или не работает\n' + 'SYS: ' + str(e)
             print_bot(error)
     elif text == kommands[4]: # GET INFO ABOUT GPV
         try:
@@ -191,17 +194,23 @@ def getMessage(message):
         except Exception as e:
             error = 'Что то пошло не так\n' + 'SYS: ' + str(e)
             print_bot(error)
-    elif text == сommands[6]: # SEND REQ TO ADMIN
-        bot.send_message(vip[0], f'Пользователь: {username}\nID: {id_user}')
-    elif text == сommands[7]: # SET STATUS ACTIVE
-        if id_user not in vip:
+    elif text == commands[6]: # SEND REQ TO ADMIN
+        bot.send_message(vip[0], f'Пользователь: {username}\nID: {id_user}\n/activate')
+    elif text == commands[7]: # SET STATUS ACTIVE
+        if str(id_user) not in vip:
             print_bot('Это действие может делать только администратор')
             return False
         def set_status_active(message):
             text = (message.text).split(' ')
             user_id = text[0]
-            status = text[1]
+            try:
+                status = int(text[1])
+            except:
+                print_bot('Напиши айди пользователя и 1/0')
+                return False
             change_status(user_id, status)
+            bot.send_message(int(user_id), 'Ваш статус изменился\n/info')
+            print_bot('Готово')
         print_bot('Напиши айди пользователя и число')
         bot.register_next_step_handler(message, set_status_active)
     else:

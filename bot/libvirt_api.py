@@ -72,7 +72,7 @@ def get_ip(name):
     conn = libvirt.open('qemu:///system')
     instance = conn.lookupByName(str(name))
     data = list(instance.interfaceAddresses(0).values())
-    ip = data[0]['addrs'][0]['addr']
+    ip = str(data[0]['addrs'][0]['addr'])
     conn.close()
     return ip
 

@@ -11,8 +11,8 @@ def reg(id_user):
         db = psycopg2.connect(dbname=DB_NAME, user=USER_NAME, 
                         password=USER_PASSWORD, host=HOST) # коннектимся под каким нибудь логином в бд
         sql = db.cursor() # создаем курсор
-        script = """INSERT INTO clients (id_user, user_status, vm_status, pub_key_status, ip_vm) 
-                        VALUES (%s, 'False', 'False', 'False', 'False')""" # пишем скрипт (подробности https://postgrespro.ru/docs/postgresql/9.6/sql-insert)
+        script = """INSERT INTO clients (id_user) 
+                        VALUES (%s)""" # пишем скрипт (подробности https://postgrespro.ru/docs/postgresql/9.6/sql-insert)
         try:
             sql.execute(script, (id_user,)) # выполняем скрипт
             db.commit()
@@ -65,19 +65,19 @@ def get_info(id_user):
 #         return "Проблемы с подключением к БД"
 
 @log.catch
-def update_user_info(id_user, columns_update_list, onwhat_update_list):
+def update_user_info(id_user, column_update, on_what_update):
     try:
         db = psycopg2.connect(dbname=DB_NAME, user=USER_NAME, 
                         password=USER_PASSWORD, host=HOST)
         sql = db.cursor()
-        buff = ''
-        for i, el in enumerate(columns_update_list):
-            buff += f'{el}={onwhat_update_list[i]}, '
+        # buff = ''
+        # for i, el in enumerate(columns_update_list):
+        #     buff += f'{el}={onwhat_update_list[i]}, '
         script = f"""UPDATE clients
-                        SET {buff}
-                        WHERE id_user={id_user}"""
+                        SET {column_update}=%s
+                        WHERE id_user=%s"""
         try:
-            sql.execute(script)
+            sql.execute(script, (on_what_update, id_user,))
             db.commit()
         except Exception as e:
             print(e)
@@ -126,8 +126,7 @@ def check_account(id_user):
 
 @log.catch
 def change_status(id_user, status):
-    if status:
-        status = 'True'
+    if status: status = 'True'
     else: status = 'False'
     try:
         db = psycopg2.connect(dbname=DB_NAME, user=USER_NAME, 
