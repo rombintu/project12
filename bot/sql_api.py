@@ -33,36 +33,30 @@ def get_info(id_user):
         sql = db.cursor()
         script = """SELECT user_status, vm_status, pub_key_status, ip_vm FROM clients
                         WHERE id_user=%s"""
-        try:
-            sql.execute(script, (id_user,))
-            info = sql.fetchone()
-            return info
-        except Exception as e:
-            print(e)
-            return "Пройдите пожалуйста регистрацию /start"
+        sql.execute(script, (id_user,))
+        info = sql.fetchone()
         db.close()
+        return info
     except Exception as e:
         #print(e)
         return "Проблемы с подключением к БД"
 
-# @log.catch
-# def update_ip_vm(id_user, ip_vm):
-#     try:
-#         db = psycopg2.connect(dbname=DB_NAME, user=USER_NAME, 
-#                         password=USER_PASSWORD, host=HOST)
-#         sql = db.cursor()
-#         script = """UPDATE clients
-#                         SET ip_vm=%s
-#                         WHERE id_user=%s"""
-#         try:
-#             sql.execute(script, (ip_vm, id_user,))
-#             db.commit()
-#         except Exception as e:
-#             #print(e)
-#             return "Пройдите пожалуйста регистрацию /start"
-#     except Exception as e:
-#         #print(e)
-#         return "Проблемы с подключением к БД"
+@log.catch
+def check_reg(id_user):
+    try:
+        db = psycopg2.connect(dbname=DB_NAME, user=USER_NAME, 
+                        password=USER_PASSWORD, host=HOST)
+        sql = db.cursor()
+        script = """SELECT exists(
+                        SELECT * FROM clients
+                        WHERE id_user=%s"""
+        sql.execute(script, (id_user,))
+        exists = sql.fetchone()
+        db.close()
+        return exists
+    except Exception as e:
+        print(e)
+        return "Проблемы с подключением к БД"
 
 @log.catch
 def update_user_info(id_user, column_update, on_what_update):
@@ -76,11 +70,8 @@ def update_user_info(id_user, column_update, on_what_update):
         script = f"""UPDATE clients
                         SET {column_update}=%s
                         WHERE id_user=%s"""
-        try:
-            sql.execute(script, (on_what_update, id_user,))
-            db.commit()
-        except Exception as e:
-            print(e)
+        sql.execute(script, (on_what_update, id_user,))
+        db.commit()
         db.close()
     except Exception as e:
         print(e)
@@ -93,13 +84,10 @@ def get_ip_vm(id_user):
         sql = db.cursor()
         script = """SELECT ip_vm FROM clients
                         WHERE id_user=%s"""
-        try:
-            sql.execute(script, (id_user,))
-            ip_vm = sql.fetchone()[0]
-            return ip_vm
-        except Exception as e:
-            print(e)
+        sql.execute(script, (id_user,))
+        ip_vm = sql.fetchone()[0]
         db.close()
+        return ip_vm
     except Exception as e:
         print(e)
 
@@ -111,16 +99,13 @@ def check_account(id_user):
         sql = db.cursor()
         script = """SELECT user_status FROM clients
                         WHERE id_user=%s"""
-        try:
-            sql.execute(script, (id_user,))
-            pre_status = sql.fetchone()[0]
-            if pre_status == 'False':
-                status = 0
-            else: status = 1
-            return status
-        except Exception as e:
-            print(e)
+        sql.execute(script, (id_user,))
+        pre_status = sql.fetchone()[0]
+        if pre_status == 'False':
+            status = 0
+        else: status = 1
         db.close()
+        return status
     except Exception as e:
         print(e)
 

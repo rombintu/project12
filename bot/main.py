@@ -43,6 +43,9 @@ def getMessage(message):
     if text == commands[0]: # START
         bot.send_message(id_user, "Привет, Я - Бот менеджер ваших виртуальных машин", reply_markup=reg_cb_func)
     elif text == commands[1] or text == kommands[3]: # ADDKEY
+        if not check_reg(id_user):
+            print_bot('Пройдите пожалуйста регистрацию /start')
+            return False
         if not check_account(id_user):
             print_bot('Ваш статус неактивен, отправьте заявку администратору /hi_admin')
             return False
@@ -63,7 +66,7 @@ def getMessage(message):
                             print_bot(e)
                             return False
                         print_bot('Ключи отправлены!')
-                        update_user_info(user_id, 'pub_key_status', 'True') # ДОПИЛИТЬ
+                        update_user_info(id_user, 'pub_key_status', 'True') # ДОПИЛИТЬ
                     except Exception as e:
                         error = 'Что то пошло не так /info\n' + 'SYS: ' + str(e)
                         print_bot(error)
@@ -86,6 +89,9 @@ def getMessage(message):
     elif text == commands[2]: # get ID
         print_bot(id_user)
     elif text == commands[3]: # INFO
+        if not check_reg(id_user):
+            print_bot('Пройдите пожалуйста регистрацию /start')
+            return False
         try:
             info = get_info(id_user)
         except:
@@ -98,13 +104,22 @@ def getMessage(message):
             buff += f'{key} : {buff_dict[key]} \n'
         bot.send_message(id_user, buff) # чтобы не было смайликов
     elif text == commands[4]: # REGISTRATION
+        if not check_reg(id_user):
+            print_bot('Пройдите пожалуйста регистрацию /start')
+            return False
         print_bot(reg(id_user))
     elif text == commands[5]: # MANAGE
+        if not check_reg(id_user):
+            print_bot('Пройдите пожалуйста регистрацию /start')
+            return False
         keyboard.row(kommands[0], kommands[1])
         keyboard.row(kommands[3], kommands[2])
         keyboard.row(kommands[4])
         bot.send_message(id_user, "Выбери действие", reply_markup=keyboard)
     elif text == kommands[0]: # On/Off
+        if not check_reg(id_user):
+            print_bot('Пройдите пожалуйста регистрацию /start')
+            return False
         if not check_account(id_user):
             print_bot('Ваш статус неактивен, отправьте заявку администратору /hi_admin')
             return False
@@ -119,6 +134,9 @@ def getMessage(message):
             error = 'Видимо машина не создана\n' + 'SYS: ' + str(e)
             print_bot(error)
     elif text == kommands[1]: # Create/Delete
+        if not check_reg(id_user):
+            print_bot('Пройдите пожалуйста регистрацию /start')
+            return False
         if not check_account(id_user):
             print_bot('Ваш статус неактивен, отправьте заявку администратору /hi_admin')
             return False
@@ -161,6 +179,9 @@ def getMessage(message):
                 print_bot(error)
             
     elif text == kommands[2]: # GET Info
+        if not check_reg(id_user):
+            print_bot('Пройдите пожалуйста регистрацию /start')
+            return False
         if not check_account(id_user):
             print_bot('Ваш статус неактивен, отправьте заявку администратору /hi_admin')
             return False
@@ -185,6 +206,9 @@ def getMessage(message):
             error = 'Видимо ваша машина еще не создана или не работает\n' + 'SYS: ' + str(e)
             print_bot(error)
     elif text == kommands[4]: # GET INFO ABOUT GPV
+        if not check_reg(id_user):
+            print_bot('Пройдите пожалуйста регистрацию /start')
+            return False
         try:
             info = virt.get_node_info()
             buff = ''
@@ -195,6 +219,9 @@ def getMessage(message):
             error = 'Что то пошло не так\n' + 'SYS: ' + str(e)
             print_bot(error)
     elif text == commands[6]: # SEND REQ TO ADMIN
+        if not check_reg(id_user):
+            print_bot('Пройдите пожалуйста регистрацию /start')
+            return False
         bot.send_message(vip[0], f'Пользователь: {username}\nID: {id_user}\n/activate')
     elif text == commands[7]: # SET STATUS ACTIVE
         if str(id_user) not in vip:
