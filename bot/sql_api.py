@@ -6,15 +6,15 @@ from config import DB_NAME, USER_NAME, USER_PASSWORD, HOST # импортиру�
 # и установить\создать бд (читайте README.md)
 
 @log.catch
-def reg(id_user):
+def reg(id_user, username):
     try:
         db = psycopg2.connect(dbname=DB_NAME, user=USER_NAME, 
                         password=USER_PASSWORD, host=HOST) # коннектимся под каким нибудь логином в бд
         sql = db.cursor() # создаем курсор
-        script = """INSERT INTO clients (id_user) 
-                        VALUES (%s)""" # пишем скрипт (подробности https://postgrespro.ru/docs/postgresql/9.6/sql-insert)
+        script = """INSERT INTO clients (id_user, user_name) 
+                        VALUES (%s, %s)""" # пишем скрипт (подробности https://postgrespro.ru/docs/postgresql/9.6/sql-insert)
         try:
-            sql.execute(script, (id_user,)) # выполняем скрипт
+            sql.execute(script, (id_user, username,)) # выполняем скрипт
             db.commit()
             return "Регистрация прошла успешно"
         except Exception as e:
@@ -22,8 +22,8 @@ def reg(id_user):
             return "Вы уже зарегистрированы"
         db.close()
     except Exception as e:
-        #print(e)
-        return "Проблемы с подключением к БД"
+        print(e)
+        
 
 @log.catch
 def get_info(id_user):
@@ -31,15 +31,32 @@ def get_info(id_user):
         db = psycopg2.connect(dbname=DB_NAME, user=USER_NAME, 
                         password=USER_PASSWORD, host=HOST)
         sql = db.cursor()
-        script = """SELECT user_status, vm_status, pub_key_status, ip_vm FROM clients
-                        WHERE id_user=%s"""
+        script = """SELECT user_status, vm_status, pub_key_status, ip_vm 
+                        FROM clients
+                            WHERE id_user=%s"""
         sql.execute(script, (id_user,))
         info = sql.fetchone()
         db.close()
         return info
     except Exception as e:
-        #print(e)
-        return "Проблемы с подключением к БД"
+        print(e)
+        
+
+@log.catch
+def get_all_clients():
+    try:
+        db = psycopg2.connect(dbname=DB_NAME, user=USER_NAME, 
+                        password=USER_PASSWORD, host=HOST)
+        sql = db.cursor()
+        script = """SELECT user_name, id_user, user_status, ip_vm 
+                        FROM clients"""
+        sql.execute(script)
+        info = sql.fetchall()
+        db.close()
+        return info
+    except Exception as e:
+        print(e)
+        
 
 @log.catch
 def check_reg(id_user):
@@ -49,14 +66,14 @@ def check_reg(id_user):
         sql = db.cursor()
         script = """SELECT exists(
                         SELECT * FROM clients
-                        WHERE id_user=%s"""
+                            WHERE id_user=%s)"""
         sql.execute(script, (id_user,))
-        exists = sql.fetchone()
+        exists = sql.fetchone()[0]
         db.close()
         return exists
     except Exception as e:
         print(e)
-        return "Проблемы с подключением к БД"
+        
 
 @log.catch
 def update_user_info(id_user, column_update, on_what_update):
@@ -69,7 +86,7 @@ def update_user_info(id_user, column_update, on_what_update):
         #     buff += f'{el}={onwhat_update_list[i]}, '
         script = f"""UPDATE clients
                         SET {column_update}=%s
-                        WHERE id_user=%s"""
+                            WHERE id_user=%s"""
         sql.execute(script, (on_what_update, id_user,))
         db.commit()
         db.close()
@@ -101,7 +118,7 @@ def check_account(id_user):
                         WHERE id_user=%s"""
         sql.execute(script, (id_user,))
         pre_status = sql.fetchone()[0]
-        if pre_status == 'False':
+        if pre_status == 'false':
             status = 0
         else: status = 1
         db.close()
@@ -112,22 +129,21 @@ def check_account(id_user):
 @log.catch
 def change_status(id_user, status):
     if status: status = 'True'
-    else: status = 'False'
+    else: status = 'false'
     try:
         db = psycopg2.connect(dbname=DB_NAME, user=USER_NAME, 
                         password=USER_PASSWORD, host=HOST)
         sql = db.cursor()
         script = """UPDATE clients
                         SET user_status=%s
-                        WHERE id_user=%s"""
+                            WHERE id_user=%s"""
         try:
             sql.execute(script, (status, id_user))
             db.commit()
         except Exception as e:
             error = 'Пользователь не найден\n' + 'SYS: ' + str(e)
-            print_bot(error)
+            print(error)
         db.close()
     except Exception as e:
-        error = 'Проблемы с подключением к БД\n' + 'SYS: ' + str(e)
-        print_bot(error)
+        print(e)
         

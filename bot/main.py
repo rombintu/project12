@@ -22,7 +22,7 @@ def getMessage(message):
     username = f'@{message.from_user.username}'
 
     
-    commands = ['/start', '/addkey', '/id', '/info', '/registr', '/manage', '/hi_admin', '/activate']
+    commands = ['/start', '/addkey', '/id', '/info', '/registr', '/manage', '/hi_admin', '/activate', '/all']
 
     kommands = ['Вкл/Выкл', 'Создать/Удалить', 'Информация о ВМ', 'Закинуть ключи', 'Информация о гипервизоре']
     keyboard = types.ReplyKeyboardMarkup()
@@ -66,7 +66,7 @@ def getMessage(message):
                             print_bot(e)
                             return False
                         print_bot('Ключи отправлены!')
-                        update_user_info(id_user, 'pub_key_status', 'True') # ДОПИЛИТЬ
+                        update_user_info(id_user, 'pub_key_status', 'True')
                     except Exception as e:
                         error = 'Что то пошло не так /info\n' + 'SYS: ' + str(e)
                         print_bot(error)
@@ -104,10 +104,7 @@ def getMessage(message):
             buff += f'{key} : {buff_dict[key]} \n'
         bot.send_message(id_user, buff) # чтобы не было смайликов
     elif text == commands[4]: # REGISTRATION
-        if not check_reg(id_user):
-            print_bot('Пройдите пожалуйста регистрацию /start')
-            return False
-        print_bot(reg(id_user))
+        print_bot(reg(id_user, username))
     elif text == commands[5]: # MANAGE
         if not check_reg(id_user):
             print_bot('Пройдите пожалуйста регистрацию /start')
@@ -149,7 +146,6 @@ def getMessage(message):
             pass
 
         list_instances = virt.get_list_instances()
-        # log.debug(list_instances)
         if str(id_user) in list_instances:
             @log.catch
             def delete_func(message):
@@ -158,7 +154,6 @@ def getMessage(message):
                     try:
                         virt.delete_instance(id_user)
                         print_bot('Машина удалена')
-                        # ИЗМНЕНИТЬ ДАННЫЕ В БД
                         update_user_info(id_user, 'vm_status', 'False')
                     except Exception as e:
                         error = 'Что то пошло не так\n' + 'SYS: ' + str(e)
@@ -172,7 +167,6 @@ def getMessage(message):
             try:
                 print_bot("""Ваша виртуальная машина создается, пожалуйста подождите 1 минуту и нажмите 'Информация о ВМ'""")
                 virt.clone_instance('alpine_orig', id_user)
-                # ИЗМНЕНИТЬ ДАННЫЕ В БД
                 update_user_info(id_user, 'vm_status', 'True')
             except Exception as e:
                 error = 'Видимо ваша машина еще не создана\n' + 'SYS: ' + str(e)
@@ -190,7 +184,7 @@ def getMessage(message):
             buff = ''
             for key in info:
                 buff += f'{key} : {info[key]}\n'
-            print_bot(buff + '/getip - присвоить IP адрес')
+            print_bot(buff + '/getip - присвоить IP адрес\n/info - мой аккаунт')
         except Exception as e:
             error = 'Видимо ВМ не создано\n' + 'SYS: ' + str(e)
             print_bot(error)
@@ -222,9 +216,9 @@ def getMessage(message):
         if not check_reg(id_user):
             print_bot('Пройдите пожалуйста регистрацию /start')
             return False
-        bot.send_message(vip[0], f'Пользователь: {username}\nID: {id_user}\n/activate')
+        bot.send_message(vip['admin'], f'Пользователь: {username}\nID: {id_user}\n/activate')
     elif text == commands[7]: # SET STATUS ACTIVE
-        if str(id_user) not in vip:
+        if id_user not in vip.values():
             print_bot('Это действие может делать только администратор')
             return False
         def set_status_active(message):
@@ -240,6 +234,18 @@ def getMessage(message):
             print_bot('Готово')
         print_bot('Напиши айди пользователя и число')
         bot.register_next_step_handler(message, set_status_active)
+    elif text == commands[8]: # GET CLIENTS
+        if id_user not in vip.values():
+            print_bot('Это действие может делать только администратор')
+            return False
+        help_dict = ['Имя', 'ID', 'Статус аккаунта', 'Адрес ВМ']
+        clients = get_all_clients()
+        buff = ''
+        for client in clients:
+            info_client = dict(zip(help_dict, client))
+            for key in info_client:
+                buff += f'{key} : {info_client[key]} \n'
+            print_bot(buff)
     else:
         print_bot("Неизвестная команда, попробуйте нажать на '/'")
 
@@ -248,7 +254,8 @@ def getMessage(message):
 def process_callback_button1(callback_query: types.CallbackQuery):
     bot.answer_callback_query(callback_query.id)
     id_user = callback_query.from_user.id
-    answer = reg(id_user)
+    username = "@" + callback_query.from_user.username
+    answer = reg(id_user, username)
     bot.send_message(id_user, answer)
 
 # MAIN
