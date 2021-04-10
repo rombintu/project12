@@ -1,6 +1,6 @@
 # BOT
-TOKEN = 'TOKEN'
-vip = ['VIPs']
+TOKEN = 'YOUR_TOKEN'
+vip = {'admin': 000000}
 
 # POSTGRESQL
 DB_NAME = ''
@@ -11,5 +11,4 @@ HOST = ''
 # SSH_api - RSA_key
 USERNAME_SSH = ''
 PASSWORD_SSH = ''
-PORT_SSH =  ''
-PUB_KEY_SERVER = ''
+PORT_SSH = 00
