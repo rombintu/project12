@@ -6,12 +6,13 @@ from telebot import types
 from loguru import logger as log
 
 # LOCAL FILES
+import libvirt_api as virt
 from codec_smiles import smile_dict
 from config import TOKEN, vip
 from sql_api import *
 from ssh_api import send_keys_with_password
-import libvirt_api as virt
 
+# INIT
 bot = telebot.TeleBot(TOKEN)
 
 
@@ -31,10 +32,12 @@ def getMessage(message):
     reg_cb_func = types.InlineKeyboardMarkup().add(reg_btn)
     
     def write_key_in_file(id_user, pub_key):
+        # Вспомогательная функция (записывает ключ в tmp-file)
         with open(f'tmp/{id_user}.txt', 'w') as f:
             f.write(pub_key)
 
     def print_bot(text):
+        # Вспомогательная функция (Отправка сообщения + рандомный смайлик)
         rand_smile = r.choice(smile_dict)
         bot.send_message(id_user, f'{text} {rand_smile.decode()}')
     
@@ -51,7 +54,9 @@ def getMessage(message):
             return False
         @log.catch
         def add_key_func(message):
+            # Обработка ключей
             def send_key_func(message, pub_key):
+                # Отправка ключей
                 req = message.text
                 if req == '/cancel':
                     print_bot('Отмена отправки')
@@ -149,6 +154,7 @@ def getMessage(message):
         if str(id_user) in list_instances:
             @log.catch
             def delete_func(message):
+                # Удаление машины после подтверждения
                 text = (message.text).lower()
                 if text == 'д' or text == 'y':
                     try:
@@ -252,6 +258,7 @@ def getMessage(message):
 
 @bot.callback_query_handler(func=lambda c: c.data == 'registr')
 def process_callback_button1(callback_query: types.CallbackQuery):
+    # Структура callback-функции для регистрации пользователя
     bot.answer_callback_query(callback_query.id)
     id_user = callback_query.from_user.id
     username = "@" + callback_query.from_user.username
