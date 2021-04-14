@@ -1,23 +1,29 @@
 # Установка postgresql (ubuntu\debian\kali\подобное)
-> `sudo apt-get update`  
-> `sudo apt-get install postgresql-13` установка сервера  
-> `sudo service start postgresql` запуск сервера  
-> `sudo service enable postgresql` автозапуск  
-> `service status postgresql` проверка  
+```sh
+sudo apt-get update
+sudo apt-get install postgresql-13; echo "установка сервера"
+sudo service start postgresql; echo "запуск сервера" 
+sudo service enable postgresql; echo "автозапуск"  
+service status postgresql; echo "проверка" 
+```
 
 ## Создать пользователя и бд
-> `sudo -i` становимся суперпользователем  
-> `su - postgres` становимся пользователем postgres  
-> `createdb testdb` создаем БД  
-> `psql -U postgres template1` заходим в дефолтную БД   
-> $ `SELECT * FROM pg_user;` узнаем какие есть пользователи  
-> $ `CREATE USER test WITH PASSWORD 'password';`  
-> $ `GRANT ALL PRIVILEGES ON DATABASE "testdb" to test;`  
-> $ `\q`  чтобы выйти  
-
+```sh
+sudo -i
+su - postgres  
+createdb testdb
+psql -U postgres template1  
+$ SELECT * FROM pg_user;
+$ CREATE USER test WITH PASSWORD 'password'; 
+$ GRANT ALL PRIVILEGES ON DATABASE "testdb" to test; 
+$ \q
+```
 ## Заходим в нашу бд под новым пользователем  
-> `psql -U test testdb`  
-> $ `SELECT version();`  
+```sh
+psql -U test testdb
+$ SELECT version();
+```
+
 > если нужно настроить удаленное [подключение](https://www.dmosk.ru/miniinstruktions.php?mini=pgsql-remote)  
 > теперь можно заняться work_with_db.py
 

@@ -1,28 +1,59 @@
-# VPS хостинг + Telegram-bot  
-## Установка зависимостей pip  
-> `pip install -r requirements.txt`  
+# VPS on Telegram-bot  
 
-### Прочие зависимости  
-> qemu=>1.5.2  
-> qemu-kvm=>1.5.2  
-> libvirt=>7.0.0  
-> postgresql=>10  
+## Описание  
+#### Что такое VPS хостинг
+**VPS (Virtual Private Server)** — это хостинг-услуга, где пользователю предоставляется виртуальный сервер с максимальными привилегиями. VPS эмулирует работу реального физического сервера — есть root-доступ, возможна установка своих операционных систем и программного обеспечения.  
+
+#### Что умеет данный бот
+С помощью данного бота есть возможность:  
+> Создавать\удалять свою ВМ  
+> Включить\выключить свою ВМ  
+> Получить подробную информацию о ВМ и гипервизоре  
+> Переслать свой *публичный ключ* на машину  
+
+В тестовом режиме используется AlpineOS Standart  (512MB/4GB)  
+
+**Frontend** проекта - удобный интерфейс телеграмм-бота, который позволяет совершать действия над виртуальными машинами, без каких-либо технических навыков.
+
+*Данный проект создан на основе *open-source* технологий и в учебных целях. 
+## Установка зависимостей pip  
+```sh
+pip install -r requirements.txt
+```  
+
+### Прочие зависимости 
+```sh
+qemu=>1.5.2
+qemu-kvm=>1.5.2
+libvirt=>7.0.0
+postgresql=>10
+```  
 
 ## Бот часть  
 ### API  
-> sql_api - управление БД  
-> libvirt_api - управление ВМ  
-> ssh_api - передача ключей  
-> parse_smiles - создание файла с кодировками смайлов  
+| Файл | Описание |
+| :----: | -------- |
+| sql_api | управление БД |
+| ssh_api | передача ключей |
+| libvirt_api | управление ВМ |
+| parse_smiles | создание файла с кодировками смайлов |
 
 ### Запуск  
-> `cp bot/config.py.bak bot/config.py`  
-> настройте файл config.py  
-> `python3 main.py`  
+```sh
+git clone https://github.com/rombintu/project12.git
+cd project12
+cp bot/config.py.bak bot/config.py
+настройте файл config.py  
+python3 main.py
+```
 
 ## Сайт часть  
 ### Запуск  
-> `python3 -m flask run`  
+```sh
+git clone https://github.com/rombintu/project12.git
+cd project12/site
+python3 -m flask run
+```
 
 ## Источники  
 [libvirt](https://linuxhint.com/libvirt_python/)  
@@ -33,5 +64,5 @@
 [how clone vm](https://www.cyberciti.biz/faq/how-to-clone-existing-kvm-virtual-machine-images-on-linux/)  
 [postgres](https://github.com/rombintu/project12/blob/main/tests/psql_help.md)  
 [ssh-api](https://habr.com/ru/post/150047/)  
-### Прочее  
-[license](https://github.com/rombintu/project12/blob/main/license)  
+### License
+MIT
