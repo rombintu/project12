@@ -261,7 +261,7 @@ def process_callback_button1(callback_query: types.CallbackQuery):
     # Структура callback-функции для регистрации пользователя
     bot.answer_callback_query(callback_query.id)
     id_user = callback_query.from_user.id
-    username = "@" + callback_query.from_user.username
+    username = "@" + str(callback_query.from_user.username)
     answer = reg(id_user, username)
     bot.send_message(id_user, answer)
 
