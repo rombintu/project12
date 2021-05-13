@@ -53,6 +53,7 @@ python3 main.py
 ```sh
 git clone https://github.com/rombintu/project12.git
 cd project12/site
+cp .env.bak .env
 python3 -m flask run
 ```
 

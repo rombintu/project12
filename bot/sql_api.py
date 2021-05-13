@@ -1,4 +1,5 @@
 from loguru import logger as log
+from config import TABLE_NAME as table
 import psycopg2 # подключаем библиотеку для апи к бд (подробности https://www.postgresqltutorial.com/postgresql-python/)
 
 
@@ -14,7 +15,7 @@ def reg(id_user, username):
         db = psycopg2.connect(dbname=DB_NAME, user=USER_NAME, 
                         password=USER_PASSWORD, host=HOST) # коннектимся под каким нибудь логином в бд
         sql = db.cursor() # создаем курсор
-        script = """INSERT INTO clients (id_user, user_name) 
+        script = f"""INSERT INTO {table} (id_user, user_name) 
                         VALUES (%s, %s)""" # пишем скрипт (подробности https://postgrespro.ru/docs/postgresql/9.6/sql-insert)
         try:
             sql.execute(script, (id_user, username,)) # выполняем скрипт
@@ -41,8 +42,8 @@ def get_info(id_user):
         db = psycopg2.connect(dbname=DB_NAME, user=USER_NAME, 
                         password=USER_PASSWORD, host=HOST)
         sql = db.cursor()
-        script = """SELECT user_status, vm_status, pub_key_status, ip_vm 
-                        FROM clients
+        script = f"""SELECT user_status, vm_status, pub_key_status, ip_vm 
+                        FROM {table}
                             WHERE id_user=%s"""
         sql.execute(script, (id_user,))
         info = sql.fetchone()
@@ -59,8 +60,8 @@ def get_all_clients():
         db = psycopg2.connect(dbname=DB_NAME, user=USER_NAME, 
                         password=USER_PASSWORD, host=HOST)
         sql = db.cursor()
-        script = """SELECT user_name, id_user, user_status, ip_vm 
-                        FROM clients"""
+        script = f"""SELECT user_name, id_user, user_status, ip_vm 
+                        FROM {table}"""
         sql.execute(script)
         info = sql.fetchall()
         db.close()
@@ -76,8 +77,8 @@ def check_reg(id_user):
         db = psycopg2.connect(dbname=DB_NAME, user=USER_NAME, 
                         password=USER_PASSWORD, host=HOST)
         sql = db.cursor()
-        script = """SELECT exists(
-                        SELECT * FROM clients
+        script = f"""SELECT exists(
+                        SELECT * FROM {table}
                             WHERE id_user=%s)"""
         sql.execute(script, (id_user,))
         exists = sql.fetchone()[0]
@@ -94,7 +95,7 @@ def update_user_info(id_user, column_update, on_what_update):
         db = psycopg2.connect(dbname=DB_NAME, user=USER_NAME, 
                         password=USER_PASSWORD, host=HOST)
         sql = db.cursor()
-        script = f"""UPDATE clients
+        script = f"""UPDATE {table}
                         SET {column_update}=%s
                             WHERE id_user=%s"""
         sql.execute(script, (on_what_update, id_user,))
@@ -111,7 +112,7 @@ def get_ip_vm(id_user):
         db = psycopg2.connect(dbname=DB_NAME, user=USER_NAME, 
                         password=USER_PASSWORD, host=HOST)
         sql = db.cursor()
-        script = """SELECT ip_vm FROM clients
+        script = f"""SELECT ip_vm FROM {table}
                         WHERE id_user=%s"""
         sql.execute(script, (id_user,))
         ip_vm = sql.fetchone()[0]
@@ -128,7 +129,7 @@ def check_account(id_user):
         db = psycopg2.connect(dbname=DB_NAME, user=USER_NAME, 
                         password=USER_PASSWORD, host=HOST)
         sql = db.cursor()
-        script = """SELECT user_status FROM clients
+        script = f"""SELECT user_status FROM {table}
                         WHERE id_user=%s"""
         sql.execute(script, (id_user,))
         pre_status = sql.fetchone()[0]
@@ -150,7 +151,7 @@ def change_status(id_user, status):
         db = psycopg2.connect(dbname=DB_NAME, user=USER_NAME, 
                         password=USER_PASSWORD, host=HOST)
         sql = db.cursor()
-        script = """UPDATE clients
+        script = f"""UPDATE {table}
                         SET user_status=%s
                             WHERE id_user=%s"""
         try:

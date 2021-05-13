@@ -21,11 +21,11 @@ def clients():
 
 @app.route('/login', methods=['POST', 'GET'])
 def auth():
-    name = request.form.get('name')
+    user_name = request.form.get('user_user_name')
 
-    if name:
-        user = User.query.filter_by(name=name).first()
-        if check_password_hash(user.name, name):
+    if user_name:
+        user = User.query.filter_by(user_user_name=user_name).first()
+        if check_password_hash(user.user_user_name, user_name):
             login_user(user)
             # next_page = request.args.get('next')
             render_template('profile.html')
@@ -41,9 +41,9 @@ def auth():
 @app.route('/registration', methods=['POST', 'GET'])
 def registration():
     if request.method == "POST":
-        name = request.form['name']
+        user_name = request.form['name']
 
-        user = User(name=name)
+        user = User(user_name=user_name)
 
         try:
             db.session.add(user)
