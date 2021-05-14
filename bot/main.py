@@ -7,10 +7,12 @@ from loguru import logger as log
 
 # LOCAL FILES
 import libvirt_api as virt
+import sign_api
 from codec_smiles import smile_dict
 from config import TOKEN, vip
 from sql_api import *
 from ssh_api import send_keys_with_password
+
 
 # INIT
 bot = telebot.TeleBot(TOKEN)
@@ -55,38 +57,41 @@ def getMessage(message):
         @log.catch
         def add_key_func(message):
             # Обработка ключей
-            def send_key_func(message, pub_key):
+            def send_key_func(message, pub_key, pb, sign):
                 # Отправка ключей
                 req = message.text
                 if req == '/cancel':
                     print_bot('Отмена отправки')
                     return False
-                elif req == '/send':
+                # ПРОВЕРКА ЭЦП -------------------------------------------
+                elif req == '/send' and sign_api.check(pub_key, pb, sign):
                     try:
                         write_key_in_file(id_user, pub_key)
                         ip_vm = get_ip_vm(id_user)
                         try:
                             send_keys_with_password(ip_vm, id_user)
+                            print_bot('Ключи отправлены!')
+                            update_user_info(id_user, 'pub_key_status', 'True')
                         except Exception as e:
                             print_bot(e)
                             return False
-                        print_bot('Ключи отправлены!')
-                        update_user_info(id_user, 'pub_key_status', 'True')
                     except Exception as e:
                         error = 'Что то пошло не так /info\n' + 'SYS: ' + str(e)
                         print_bot(error)
             if message.text:
                 pub_key = message.text
+                pb, sign = sign_api.create_sign(pub_key)
                 print_bot(pub_key)
                 print_bot('Если все верно, нажмите /send, иначе нажмите /cancel')
-                bot.register_next_step_handler(message, send_key_func, pub_key)
+                bot.register_next_step_handler(message, send_key_func, pub_key, pb, sign)
             elif message.document:
                 doc_id = message.document.file_id
                 file_info = bot.get_file(doc_id)
                 pub_key = get(f'http://api.telegram.org/file/bot{TOKEN}/{file_info.file_path}').content
                 print_bot(pub_key.decode())
+                pb, sign = sign_api.create_sign(pub_key.decode())
                 print_bot('Если все верно, нажмите /send, иначе нажмите /cancel')
-                bot.register_next_step_handler(message, send_key_func, pub_key.decode())
+                bot.register_next_step_handler(message, send_key_func, pub_key.decode(), pb, sign)
             else:
                 print_bot('Ожидается файл или текст')
         print_bot("Пришлите ключ файлом или текстом")
