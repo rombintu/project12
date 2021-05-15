@@ -48,7 +48,11 @@ cp bot/config.py.bak bot/config.py
 настройте файл config.py  
 python3 main.py
 ```
+### Скриншоты
+![alt text](bot/public/manage.png)
 ![alt text](bot/public/bot_pic.png)
+![alt text](bot/public/commands.png)
+
 ## Источники  
 * [libvirt](https://linuxhint.com/libvirt_python/)  
 * [libvirt-api](https://libvirt.org/docs/libvirt-appdev-guide-python/en-US/pdf/Version-1.1-Libvirt_Application_Development_Guide_Using_Python-en-US.pdf)  

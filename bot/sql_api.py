@@ -133,7 +133,7 @@ def check_account(id_user):
                         WHERE id_user=%s"""
         sql.execute(script, (id_user,))
         pre_status = sql.fetchone()[0]
-        if pre_status == 'false':
+        if pre_status == 'false' or pre_status == None:
             status = 0
         else: status = 1
         db.close()
