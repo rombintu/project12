@@ -48,16 +48,7 @@ cp bot/config.py.bak bot/config.py
 настройте файл config.py  
 python3 main.py
 ```
-
-## Сайт часть  
-### Запуск  
-```sh
-git clone https://github.com/rombintu/project12.git
-cd project12/site
-cp .env.bak .env
-python3 -m flask run
-```
-
+![alt text](bot/public/bot_pic.png)
 ## Источники  
 * [libvirt](https://linuxhint.com/libvirt_python/)  
 * [libvirt-api](https://libvirt.org/docs/libvirt-appdev-guide-python/en-US/pdf/Version-1.1-Libvirt_Application_Development_Guide_Using_Python-en-US.pdf)  
@@ -67,4 +58,4 @@ python3 -m flask run
 * [how clone vm](https://www.cyberciti.biz/faq/how-to-clone-existing-kvm-virtual-machine-images-on-linux/)    
 * [ssh-api](https://habr.com/ru/post/150047/)  
 ### License
-MIT
+M I T
