@@ -1,7 +1,0 @@
-venv
-env
-.env
-__pycache__
-project/config.py
-cert.pem
-key.pem
