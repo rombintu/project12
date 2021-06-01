@@ -1,21 +1,35 @@
-import os
-
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+# init SQLAlchemy so we can use it later in our models
+db = SQLAlchemy()
 
-from project import config
+def create_app():
+    app = Flask(__name__)
 
-app = Flask(__name__)
-# app.config.from_object(os.environ['APP_SETTINGS'])
-app.config.from_object(config.Config)
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-manager = LoginManager(app)
+    app.config['SECRET_KEY'] = 'secret-key-baso-03-17'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 
-from project import models, routes
+    db.init_app(app)
+
+    login_manager = LoginManager()
+    login_manager.login_view = 'auth.login'
+    login_manager.init_app(app)
+
+    from .models import User
 
 
-db.create_all()
+    # blueprint for auth routes in our app
+    from .auth import auth as auth_blueprint
+    app.register_blueprint(auth_blueprint)
 
+    # blueprint for non-auth parts of app
+    from .main import main as main_blueprint
+    app.register_blueprint(main_blueprint)
+    
+    @login_manager.user_loader
+    def load_user(user_id):
+        # since the user_id is just the primary key of our user table, use it in the query for the user
+        return User.query.get(int(user_id))
+    return app

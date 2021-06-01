@@ -1,4 +1,5 @@
-bot/env
-bot/__pycache__
-bot/config.py
-.vscode/sftp.json
+env
+venv
+__pycache__
+config.py
+sftp.json

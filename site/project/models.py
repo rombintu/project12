@@ -1,7 +1,5 @@
 from flask_login import UserMixin
-
-from project import db, manager
-from sqlalchemy.dialects.postgresql import JSON
+from . import db
 
 
 class User(db.Model, UserMixin):
@@ -14,9 +12,4 @@ class User(db.Model, UserMixin):
     pub_key_status = db.Column(db.String(10), default="false")
     ip_vm = db.Column(db.String(100), default="false")
 
-    def __repr__(self):
-           return f"{self.user_name}; Статус: {self.user_status}"
 
-@manager.user_loader
-def load_user(user_id):
-    return User.query.get(user_id)
