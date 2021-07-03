@@ -2,9 +2,9 @@
 ```sh
 sudo apt-get update
 sudo apt-get install postgresql-13; echo "установка сервера"
-sudo service start postgresql; echo "запуск сервера" 
-sudo service enable postgresql; echo "автозапуск"  
-service status postgresql; echo "проверка" 
+sudo systemctl start postgresql; echo "запуск сервера" 
+sudo systemctl enable postgresql; echo "автозапуск"  
+systemctl status postgresql; echo "проверка" 
 ```
 
 ## Создать пользователя и бд
